@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de ODP - Studio Sync</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts for Premium Feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Form Area -->
+        <aside class="editor-panel">
+            <header class="panel-header">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <h1>ODP Maker</h1>
+                </div>
+                <p class="subtitle">Gestor de Órdenes de Trabajo</p>
+            </header>
+
+            <form id="odpForm">
+                <!-- Section: Project Info -->
+                <div class="form-section">
+                    <h3><span class="step-num">1</span> Detalles del Proyecto</h3>
+
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="text" id="fecha" name="fecha" placeholder="Ej: 14 de Enero">
+                        </div>
+                        <div class="input-group">
+                            <label for="fechaLimite">Fecha Límite</label>
+                            <input type="text" id="fechaLimite" name="fechaLimite" placeholder="Ej: 21680">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="disenador">Diseñador Asignado</label>
+                        <input type="text" id="disenador" name="disenador" placeholder="Nombre del diseñador">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tareaClever">Número de Tarea (Clever)</label>
+                        <input type="text" id="tareaClever" name="tareaClever" placeholder="Ej: x asignar en el taller">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="propiedad">Propiedad Destino</label>
+                        <input type="text" id="propiedad" name="propiedad" placeholder="Ej: THG">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="nombreTarea">Nombre de la Tarea</label>
+                        <input type="text" id="nombreTarea" name="nombreTarea" placeholder="Ej: Reily Green">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="rutaArchivo">Ruta del Archivo</label>
+                        <input type="text" id="rutaArchivo" name="rutaArchivo" placeholder="Ej: nas-medios/prod/...">
+                    </div>
+                </div>
+
+                <!-- Section: Item Details (Dynamic) -->
+                <div class="form-section">
+                    <h3><span class="step-num">2</span> Especificaciones</h3>
+                    <div id="itemsEditorContainer">
+                        <!-- Dynamic Item Input Rows will appear here -->
+                    </div>
+                    <button type="button" id="addItemBtn" class="btn btn-secondary btn-sm"
+                        style="margin-top:0.5rem; width:100%; padding:0.5rem 1rem; cursor:pointer; background:rgba(255,255,255,0.05); border:1px dashed #666; color:#ccc; border-radius:6px;">+
+                        Añadir Fila</button>
+                </div>
+
+                <!-- Section: Visuals (Multi-Image) -->
+                <div class="form-section">
+                    <h3><span class="step-num">3</span> Referencia Visual</h3>
+
+                    <div class="file-upload-container">
+                        <input type="file" id="imageUpload" accept="image/*" multiple hidden>
+                        <label for="imageUpload" class="file-drop-zone">
+                            <span class="icon">🖼️</span>
+                            <span class="text">Arrastra o selecciona imágenes</span>
+                        </label>
+                    </div>
+
+                    <div id="imagesEditorList" class="images-editor-list"
+                        style="margin-top:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+                        <!-- Dynamic Image Controls (Slider + Name) will appear here -->
+                    </div>
+                </div>
+
+                <!-- Section: Signatures -->
+                <div class="form-section">
+                    <h3><span class="step-num">4</span> Entrega y Notas</h3>
+
+                    <div class="input-group">
+                        <label for="observaciones">Observaciones</label>
+                        <textarea id="observaciones" rows="3" placeholder="Notas adicionales..."></textarea>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="solicitante">Solicitante</label>
+                            <input type="text" id="solicitante">
+                        </div>
+                        <div class="input-group">
+                            <label for="fechaEnvio">Fecha de Envío</label>
+                            <input type="text" id="fechaEnvio">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="extId">Ext. o ID</label>
+                            <input type="text" id="extId">
+                        </div>
+                        <div class="input-group">
+                            <label for="transportado">Transportado Por</label>
+                            <input type="text" id="transportado">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="actions-footer">
+                <button type="button" id="printBtn" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    Imprimir / Guardar PDF
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Preview Area -->
+        <main class="preview-panel">
+            <div class="preview-toolbar">
+                <div class="zoom-controls">
+                    <button class="icon-btn">-</button>
+                    <span>100%</span>
+                    <button class="icon-btn">+</button>
+                </div>
+            </div>
+
+            <div class="paper-canvas-wrapper">
+                <!-- The A4 Page -->
+                <div id="odpPaper" class="paper-a4">
+                    <header class="odp-header">
+                        <h2>ORDEN DE TRABAJO</h2>
+                    </header>
+
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">FECHA:</td>
+                            <td class="display-fecha value text-purple"></td>
+                            <td class="label">FECHA LIMITE DE ENTREGA:</td>
+                            <td class="display-fechaLimite value text-purple"></td>
+                        </tr>
+                        <tr>
+                            <td class="label">DISEÑADOR ASIGNADO:</td>
+                            <td class="display-disenador value text-purple"></td>
+                            <td class="label">NUMERO DE TAREA EN CLEVER:</td>
+                            <td class="display-tareaClever value text-purple"></td>
+                        </tr>
+                        <tr>
+                            <td class="label">PROPIEDAD DESTINO:</td>
+                            <td colspan="3" class="display-propiedad value text-purple"></td>
+                        </tr>
+                        <tr>
+                            <td class="label">NOMBRE DE LA TAREA:</td>
+                            <td colspan="3" class="display-nombreTarea value text-purple"></td>
+                        </tr>
+                        <tr>
+                            <td class="label">RUTA DEL ARCHIVO:</td>
+                            <td colspan="3" class="display-rutaArchivo value text-purple"></td>
+                        </tr>
+                    </table>
+
+                    <table class="items-table">
+                        <thead>
+                            <tr class="header-row">
+                                <th class="col-cant">CANT</th>
+                                <th class="col-desc">DESCRIPCIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+
+                    <div class="logistics-grid">
+                        <div class="log-item">
+                            <span class="label">SOLICITANTE:</span>
+                            <span class="display-solicitante value"></span>
+                        </div>
+                        <div class="log-item">
+                            <span class="label">FECHA DE ENVÍO:</span>
+                            <span class="display-fechaEnvio value"></span>
+                        </div>
+                        <div class="log-item">
+                            <span class="label">EXT. O ID DEL SOLICITANTE:</span>
+                            <span class="display-extId value"></span>
+                        </div>
+                        <div class="log-item">
+                            <span class="label">TRANSPORTADO POR:</span>
+                            <span class="display-transportado value"></span>
+                        </div>
+                    </div>
+
+                    <div class="visual-reference-area">
+                        <div class="section-header">VISTA PRELIMINAR</div>
+                        <div id="imagesPreviewContainer" class="images-preview-grid">
+                            <!-- Dynamic Images -->
+                        </div>
+                    </div>
+
+                    <!-- Observations Moved to Bottom -->
+                    <div class="observations-box">
+                        <div class="obs-label">OBSERVACIONES:</div>
+                        <div class="display-observaciones obs-content"></div>
+                    </div>
+
+                    <!-- New Footer -->
+                    <footer class="odp-footer">
+                        <div class="footer-left">
+                            <span class="label">FECHA:</span>
+                            <span class="display-fecha value text-purple"></span>
+                        </div>
+                        <div class="footer-right">
+                            <span class="label">TAREA CLEVER:</span>
+                            <span class="display-tareaClever value text-purple"></span>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
