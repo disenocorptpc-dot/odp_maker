@@ -253,12 +253,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>` : '';
 
             wrapper.innerHTML = `
+                <div class="img-caption">${img.name}</div>
                 <div class="preview-image-container">
                     <img src="${img.url}" alt="${img.name}">
                     ${dimH_HTML}
                     ${dimV_HTML}
                 </div>
-                <div class="img-caption">${img.name}</div>
             `;
             imagesPreviewEl.appendChild(wrapper);
         });
