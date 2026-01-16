@@ -355,10 +355,10 @@ body {
 
 .info-table .label {
     background: #f5f5f5;
-    /* Slight gray for labels? Optional, not in image really but helps structure */
     color: #666;
     text-align: right;
-    width: 20%;
+    width: 15%;
+    /* Reduced from 20% to make room for checklist */
     text-transform: uppercase;
     font-size: 8pt;
 }
@@ -366,6 +366,23 @@ body {
 .info-table .value {
     font-weight: bold;
     color: var(--info-purple);
+}
+
+.label-check {
+    width: 60px;
+    background: #f5f5f5;
+    /* Match labels */
+    color: #666;
+    font-size: 8pt;
+    text-align: right;
+    /* Align right like main labels */
+    padding-right: 5px;
+}
+
+.check-cell {
+    width: 25px;
+    min-width: 25px;
+    background: white;
 }
 
 .items-table th {
