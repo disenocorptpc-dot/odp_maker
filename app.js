@@ -35,6 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.display-observaciones').textContent = e.target.value;
     });
 
+    // Processes Checklist Bindings
+    const processChecks = ['plotter', 'router', 'laser', 'acabados', 'calidad'];
+    processChecks.forEach(proc => {
+        const inputId = `input-check-${proc}`;
+        const previewId = `preview-check-${proc}`;
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        if (input && preview) {
+            input.addEventListener('change', (e) => {
+                // If checked, add 'X' or checkmark. Or toggle a class.
+                preview.textContent = e.target.checked ? 'X' : '';
+                // Optional: make it bold or styled
+                preview.style.textAlign = 'center';
+                preview.style.fontWeight = 'bold';
+            });
+        }
+    });
+
     // --- 2. Dynamic Items Logic ---
     const itemsContainer = document.getElementById('itemsEditorContainer');
     const itemsTableBody = document.getElementById('itemsTableBody');

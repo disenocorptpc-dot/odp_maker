@@ -69,6 +69,19 @@
                         <label for="rutaArchivo">Ruta del Archivo</label>
                         <input type="text" id="rutaArchivo" name="rutaArchivo" placeholder="Ej: nas-medios/prod/...">
                     </div>
+
+                    <div class="input-group processes-group">
+                        <label>Procesos (Marcar si aplica)</label>
+                        <div class="checkbox-grid">
+                            <label class="check-label"><input type="checkbox" id="input-check-plotter"> Plotter</label>
+                            <label class="check-label"><input type="checkbox" id="input-check-router"> Router</label>
+                            <label class="check-label"><input type="checkbox" id="input-check-laser"> Láser</label>
+                            <label class="check-label"><input type="checkbox" id="input-check-acabados">
+                                Acabados</label>
+                            <label class="check-label"><input type="checkbox" id="input-check-calidad"> Ctrl.
+                                Calidad</label>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section: Item Details (Dynamic) -->
@@ -168,7 +181,7 @@
                             <td class="label">FECHA LIMITE DE ENTREGA:</td>
                             <td class="display-fechaLimite value text-purple"></td>
                             <td class="label-check">Plotter</td>
-                            <td class="check-cell"></td>
+                            <td class="check-cell" id="preview-check-plotter"></td>
                         </tr>
                         <tr>
                             <td class="label">DISEÑADOR ASIGNADO:</td>
@@ -176,25 +189,25 @@
                             <td class="label">NUMERO DE TAREA EN CLEVER:</td>
                             <td class="display-tareaClever value text-purple"></td>
                             <td class="label-check">Router</td>
-                            <td class="check-cell"></td>
+                            <td class="check-cell" id="preview-check-router"></td>
                         </tr>
                         <tr>
                             <td class="label">PROPIEDAD DESTINO:</td>
                             <td colspan="3" class="display-propiedad value text-purple"></td>
                             <td class="label-check">Láser</td>
-                            <td class="check-cell"></td>
+                            <td class="check-cell" id="preview-check-laser"></td>
                         </tr>
                         <tr>
                             <td class="label">NOMBRE DE LA TAREA:</td>
                             <td colspan="3" class="display-nombreTarea value text-purple"></td>
                             <td class="label-check">Acabados</td>
-                            <td class="check-cell"></td>
+                            <td class="check-cell" id="preview-check-acabados"></td>
                         </tr>
                         <tr>
                             <td class="label">RUTA DEL ARCHIVO:</td>
                             <td colspan="3" class="display-rutaArchivo value text-purple"></td>
                             <td class="label-check">Ctrl de calidad</td>
-                            <td class="check-cell"></td>
+                            <td class="check-cell" id="preview-check-calidad"></td>
                         </tr>
                     </table>
 
