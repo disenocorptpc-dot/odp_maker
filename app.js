@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addImage(url, name) {
         const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-        // Default scale 100%
-        imagesState.push({ id, url, name, scale: 100 });
+        // Default scale 100%, dims empty
+        imagesState.push({ id, url, name, scale: 100, dimW: '', dimH: '' });
         renderEditorImages();
         renderPreviewImages();
     }
@@ -190,10 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPreviewImages();
     }
 
-    function updateImageScale(id, scale) {
+    function updateImageState(id, key, value) {
         const img = imagesState.find(i => i.id === id);
         if (img) {
-            img.scale = scale;
+            img[key] = value;
             renderPreviewImages();
         }
     }
@@ -206,11 +206,20 @@ document.addEventListener('DOMContentLoaded', () => {
             div.innerHTML = `
                 <img src="${img.url}" class="thumbs-prev">
                 <div class="img-control-details">
-                    <div style="display:flex; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                         <span class="img-name" title="${img.name}">${img.name}</span>
                         <button class="delete-btn" data-id="${img.id}">X</button>
                     </div>
-                    <input type="range" class="img-slider" min="20" max="100" value="${img.scale}" data-id="${img.id}">
+                    <!-- Zoom Slider -->
+                    <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                         <span style="font-size:0.7rem; color:#888;">Tamaño:</span>
+                         <input type="range" class="img-slider" min="20" max="100" value="${img.scale}" data-id="${img.id}" data-key="scale" style="flex:1;">
+                    </div>
+                    <!-- Dimensions Inputs -->
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                        <input type="text" placeholder="Ancho (mm)" value="${img.dimW || ''}" data-id="${img.id}" data-key="dimW" style="font-size:0.7rem; padding:2px;">
+                        <input type="text" placeholder="Alto (mm)" value="${img.dimH || ''}" data-id="${img.id}" data-key="dimH" style="font-size:0.7rem; padding:2px;">
+                    </div>
                 </div>
             `;
             imagesListEl.appendChild(div);
@@ -218,8 +227,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Listeners
         imagesListEl.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => removeImage(e.target.dataset.id)));
-        imagesListEl.querySelectorAll('.img-slider').forEach(range => {
-            range.addEventListener('input', (e) => updateImageScale(e.target.dataset.id, e.target.value));
+
+        // Universal Input Listener for image controls
+        imagesListEl.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', (e) => updateImageState(e.target.dataset.id, e.target.dataset.key, e.target.value));
         });
     }
 
@@ -228,17 +239,25 @@ document.addEventListener('DOMContentLoaded', () => {
         imagesState.forEach(img => {
             const wrapper = document.createElement('div');
             wrapper.className = 'preview-image-wrapper';
-            // Set scale via width style on wrapper
-            wrapper.style.width = `${img.scale}%`; // relative to the flex item capability, might need tuning based on parent
-            // Actually, if we want them to flow, width is tricky.
-            // Requirement: "ajustando automaticamente en el espacio que este disponible"
-            // But user also wants to edit size.
-            // Let's interpret slider as "MaxSize" or Flex basis relative to page width?
-            // Let's just use width relative to the page (100% = full A4 width).
             wrapper.style.width = `${img.scale}%`;
 
+            // Dim Lines Logic
+            const dimH_HTML = img.dimW ? `
+                <div class="dim-line dim-h">
+                    <span class="dim-label">${img.dimW}</span>
+                </div>` : '';
+
+            const dimV_HTML = img.dimH ? `
+                <div class="dim-line dim-v">
+                    <span class="dim-label">${img.dimH}</span>
+                </div>` : '';
+
             wrapper.innerHTML = `
-                <img src="${img.url}" alt="${img.name}">
+                <div class="preview-image-container">
+                    <img src="${img.url}" alt="${img.name}">
+                    ${dimH_HTML}
+                    ${dimV_HTML}
+                </div>
                 <div class="img-caption">${img.name}</div>
             `;
             imagesPreviewEl.appendChild(wrapper);

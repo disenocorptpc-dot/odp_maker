@@ -528,13 +528,118 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 25px;
+    /* Space for bottom arrow */
+    margin-right: 25px;
+    /* Space for right arrow */
 }
 
-.preview-image-wrapper img {
+/* Container defining standard positioning context for arrows */
+.preview-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.preview-image-container img {
     width: 100%;
     display: block;
     height: auto;
     object-fit: contain;
+    border: 1px solid #eee;
+    /* Subtle border to define edge */
+}
+
+/* Dimensions Common */
+.dim-line {
+    position: absolute;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Arrowheads using pseudo-elements */
+.dim-line::before,
+.dim-line::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+/* Horizontal Dimension Lower */
+.dim-h {
+    bottom: -15px;
+    /* Distance from image */
+    left: 0;
+    width: 100%;
+    height: 1px;
+    /* Line thickness */
+    border-left: 1px solid #333;
+    /* End caps */
+    border-right: 1px solid #333;
+}
+
+.dim-h::before {
+    left: 0;
+    top: -2px;
+    border-width: 3px 6px 3px 0;
+    border-color: transparent #333 transparent transparent;
+}
+
+.dim-h::after {
+    right: 0;
+    top: -2px;
+    border-width: 3px 0 3px 6px;
+    border-color: transparent transparent transparent #333;
+}
+
+.dim-h .dim-label {
+    background: white;
+    padding: 0 4px;
+    font-size: 7pt;
+    color: #333;
+    margin-top: 8px;
+    /* Push text below line */
+}
+
+/* Vertical Dimension Right */
+.dim-v {
+    top: 0;
+    right: -15px;
+    /* Distance from image */
+    height: 100%;
+    width: 1px;
+    border-top: 1px solid #333;
+    /* End caps */
+    border-bottom: 1px solid #333;
+}
+
+.dim-v::before {
+    top: 0;
+    left: -2px;
+    border-width: 0 3px 6px 3px;
+    border-color: transparent transparent #333 transparent;
+}
+
+.dim-v::after {
+    bottom: 0;
+    left: -2px;
+    border-width: 6px 3px 0 3px;
+    border-color: #333 transparent transparent transparent;
+}
+
+.dim-v .dim-label {
+    background: white;
+    padding: 4px 0;
+    font-size: 7pt;
+    color: #333;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    /* Read upwards */
+    margin-left: 8px;
+    /* Push text right of line */
 }
 
 .img-caption {
