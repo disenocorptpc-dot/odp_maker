@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- Zoom Slider -->
                     <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
                          <span style="font-size:0.7rem; color:#888;">Tamaño:</span>
-                         <input type="range" class="img-slider" min="20" max="100" value="${img.scale}" data-id="${img.id}" data-key="scale" style="flex:1;">
+                         <input type="range" class="img-slider" min="5" max="100" value="${img.scale}" data-id="${img.id}" data-key="scale" style="flex:1;">
                     </div>
                     <!-- Dimensions Inputs -->
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
