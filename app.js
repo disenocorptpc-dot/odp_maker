@@ -41,19 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Theme Logic
+    // Theme Logic
     function applyTheme(propiedadName) {
-        const paper = document.getElementById('odpPaper');
-        const footerLogo = document.getElementById('footerLogo');
-        const odpPage2 = document.getElementById('odpPage2');
-        const footerLogo2 = document.getElementById('footerLogoPage2');
-
         let logoSrc = 'assets/logo_tpc.webp'; // Default
         let logoHeight = '40px';
         let themeClass = '';
-
-        // Reset classes but keep base
-        paper.className = 'paper-a4';
-        if (odpPage2) odpPage2.className = 'paper-a4';
 
         if (propiedadName.includes('Jamaica')) {
             themeClass = 'theme-jamaica';
@@ -73,19 +65,24 @@ document.addEventListener('DOMContentLoaded', () => {
             logoHeight = '50px';
         }
 
-        if (themeClass) {
-            paper.classList.add(themeClass);
-            if (odpPage2) odpPage2.classList.add(themeClass);
-        }
+        // Apply to ALL pages (Main + Dynamic)
+        const allPages = document.querySelectorAll('.paper-a4');
+        allPages.forEach(page => {
+            // Preserve 'dynamic-page' class but reset theme
+            const isDynamic = page.classList.contains('dynamic-page');
+            page.className = 'paper-a4' + (isDynamic ? ' dynamic-page' : '');
 
-        if (footerLogo) {
-            footerLogo.src = logoSrc;
-            footerLogo.style.height = logoHeight;
-        }
-        if (footerLogo2) {
-            footerLogo2.src = logoSrc;
-            footerLogo2.style.height = logoHeight;
-        }
+            if (themeClass) {
+                page.classList.add(themeClass);
+            }
+
+            // Update Footer Logo
+            const logoImg = page.querySelector('.odp-footer img');
+            if (logoImg) {
+                logoImg.src = logoSrc;
+                logoImg.style.height = logoHeight;
+            }
+        });
     }
     // Observations
     document.getElementById('observaciones').addEventListener('input', (e) => {
