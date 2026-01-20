@@ -20,16 +20,43 @@ document.addEventListener('DOMContentLoaded', () => {
     simpleIds.forEach(id => {
         const input = document.getElementById(id);
         if (input) {
-            input.addEventListener('input', (e) => {
-                updatePreview(id, e.target.value);
+            // Event listener
+            input.addEventListener(input.tagName === 'SELECT' ? 'change' : 'input', (e) => {
+                const val = e.target.value;
+                updatePreview(id, val);
+
+                // Special handling for Propiedad Theme
+                if (id === 'propiedad') {
+                    applyTheme(val);
+                }
                 // Update document title for PDF name
                 if (id === 'tareaClever') {
                     document.title = e.target.value || "ODP Maker";
                 }
             });
+            // Initial sync
             updatePreview(id, input.value);
+            if (id === 'propiedad') applyTheme(input.value);
         }
     });
+
+    // Theme Logic
+    function applyTheme(propiedadName) {
+        const paper = document.getElementById('odpPaper');
+        // Reset classes but keep base (if any? assumes id usage mainly)
+        paper.className = 'paper-a4'; // Reset to base class
+
+        if (propiedadName.includes('Jamaica')) {
+            paper.classList.add('theme-jamaica');
+        } else if (propiedadName.includes('Los Cabos')) {
+            paper.classList.add('theme-lbcab');
+        } else if (propiedadName.includes('Cancun') && propiedadName.includes('Le Blanc')) {
+            paper.classList.add('theme-lbcun');
+        } else if (propiedadName.includes('Punta Cana') && propiedadName.includes('Moon Palace')) {
+            paper.classList.add('theme-mppc');
+        }
+        // Default (Palace Resorts) uses standard vars
+    }
     // Observations
     document.getElementById('observaciones').addEventListener('input', (e) => {
         document.querySelector('.display-observaciones').textContent = e.target.value;

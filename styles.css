@@ -7,14 +7,43 @@
     --text-main: #e2e8f0;
     --text-muted: #94a3b8;
 
-    /* Paper Print Colors */
+    /* Paper Print Colors - Dynamic Defaults */
     --paper-bg: white;
     --paper-text: #1e293b;
-    --paper-header-bg: #666;
-    /* Gray background from image */
-    --paper-border: #999;
-    --info-purple: #7e22ce;
-    /* The purple text in the image */
+    --theme-primary: #666;
+    /* Default Header Gray */
+    --theme-border: #999;
+    --theme-cell-bg: white;
+    /* Default value background */
+    --theme-text-values: #7e22ce;
+    /* Current purple */
+}
+
+/* Theme Overrides */
+/* Jamaica (Cyan #94d6d3) */
+.theme-jamaica {
+    --theme-primary: #94d6d3;
+    --theme-border: #94d6d3;
+}
+
+/* Le Blanc Los Cabos (Orange #ad6d29, Gray Cells #ebe8e6) */
+.theme-lbcab {
+    --theme-primary: #ad6d29;
+    --theme-border: #ad6d29;
+    --theme-cell-bg: #ebe8e6;
+}
+
+/* Le Blanc Cancun (Orange #ad6d29, White Cells) */
+.theme-lbcun {
+    --theme-primary: #ad6d29;
+    --theme-border: #ad6d29;
+    --theme-cell-bg: #ffffff;
+}
+
+/* Moon Palace Punta Cana (Pink #eb128a) */
+.theme-mppc {
+    --theme-primary: #eb128a;
+    --theme-border: #eb128a;
 }
 
 /* Reset & Base */
@@ -340,8 +369,9 @@ body {
 }
 
 /* Paper Content Styles */
+/* Paper Content Styles */
 .odp-header {
-    background: #666;
+    background: var(--theme-primary);
     color: white;
     text-align: center;
     padding: 3px 0;
@@ -356,12 +386,20 @@ body {
 }
 
 .odp-footer {
-    background: #666;
-    color: white;
-    text-align: center;
-    padding: 3px 0;
-    margin-top: 8px;
+    border-top: 1px solid #ccc;
+    padding-top: 5px;
+    margin-top: 10px;
+    /* Reduced margin */
+    display: flex;
+    justify-content: space-between;
     font-size: 8pt;
+    text-transform: uppercase;
+    color: #000 !important;
+    /* Force black text */
+    background: transparent !important;
+    /* Force no bg */
+    font-weight: normal !important;
+    /* Force no bold */
 }
 
 .info-table,
@@ -374,7 +412,7 @@ body {
 }
 
 .info-table td {
-    border: 1px solid #999;
+    border: 1px solid var(--theme-border);
     padding: 3px 6px;
     /* tighter cell padding */
 }
@@ -389,9 +427,11 @@ body {
     font-size: 8pt;
 }
 
+/* Value cells background changes per theme */
 .info-table .value {
+    background: var(--theme-cell-bg);
     font-weight: bold;
-    color: var(--info-purple);
+    color: var(--theme-text-values);
 }
 
 .label-check {
@@ -403,28 +443,37 @@ body {
     text-align: right;
     /* Align right like main labels */
     padding-right: 5px;
+    border: 1px solid var(--theme-border);
 }
 
 .check-cell {
     width: 25px;
     min-width: 25px;
     background: white;
+    border: 1px solid var(--theme-border);
 }
 
 .items-table th {
-    background: #666;
+    background: var(--theme-primary);
     color: white;
     text-align: left;
     padding: 4px 8px;
     font-weight: normal;
     text-transform: uppercase;
     font-size: 9pt;
-    border: 1px solid #999;
+    border: 1px solid var(--theme-border);
 }
 
 .items-table td {
-    border: 1px solid #999;
-    padding: 6px 8px;
+    border: 1px solid var(--theme-border);
+    padding: 3px 6px;
+    /* tight */
+    vertical-align: top;
+    height: 100px;
+    /* Force minimum height for item cells */
+}
+
+padding: 6px 8px;
 }
 
 .col-cant {
@@ -498,262 +547,262 @@ body {
     /* Take remaining space */
     position: relative;
     min-height: 200px;
-}
 
-.section-header {
-    background: #666;
-    color: white;
-    padding: 2px 0;
-    /* thinner */
-    font-size: 9pt;
-    text-transform: uppercase;
-    text-align: center;
-    /* Center like main header */
-    margin-bottom: 5px;
-    font-weight: normal;
-}
-
-.images-preview-grid {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: center;
-    /* Center content */
-    align-content: flex-start;
-    gap: 10px;
-    width: 100%;
-}
-
-.preview-image-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 25px;
-    /* Space for bottom arrow */
-    margin-right: 25px;
-    /* Space for right arrow */
-}
-
-/* Container defining standard positioning context for arrows */
-.preview-image-container {
-    position: relative;
-    display: inline-block;
-}
-
-.preview-image-container img {
-    width: 100%;
-    display: block;
-    height: auto;
-    object-fit: contain;
-    border: 1px solid #eee;
-    /* Subtle border to define edge */
-}
-
-/* Dimensions Common */
-.dim-line {
-    position: absolute;
-    background: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Arrowheads using pseudo-elements */
-.dim-line::before,
-.dim-line::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-style: solid;
-}
-
-/* Horizontal Dimension Lower */
-.dim-h {
-    bottom: -15px;
-    /* Distance from image */
-    left: 0;
-    width: 100%;
-    height: 1px;
-    /* Line thickness */
-    border-left: 1px solid #333;
-    /* End caps */
-    border-right: 1px solid #333;
-}
-
-.dim-h::before {
-    left: 0;
-    top: -2px;
-    border-width: 3px 6px 3px 0;
-    border-color: transparent #333 transparent transparent;
-}
-
-.dim-h::after {
-    right: 0;
-    top: -2px;
-    border-width: 3px 0 3px 6px;
-    border-color: transparent transparent transparent #333;
-}
-
-.dim-h .dim-label {
-    background: white;
-    padding: 0 4px;
-    font-size: 7pt;
-    color: #333;
-    margin-top: 8px;
-    /* Push text below line */
-}
-
-/* Vertical Dimension Right */
-.dim-v {
-    top: 0;
-    right: -15px;
-    /* Distance from image */
-    height: 100%;
-    width: 1px;
-    border-top: 1px solid #333;
-    /* End caps */
-    border-bottom: 1px solid #333;
-}
-
-.dim-v::before {
-    top: 0;
-    left: -2px;
-    border-width: 0 3px 6px 3px;
-    border-color: transparent transparent #333 transparent;
-}
-
-.dim-v::after {
-    bottom: 0;
-    left: -2px;
-    border-width: 6px 3px 0 3px;
-    border-color: #333 transparent transparent transparent;
-}
-
-.dim-v .dim-label {
-    background: white;
-    padding: 4px 0;
-    font-size: 7pt;
-    color: #333;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    /* Read upwards */
-    margin-left: 8px;
-    /* Push text right of line */
-}
-
-.img-caption {
-    font-size: 8pt;
-    font-style: italic;
-    color: #666;
-    margin-bottom: 5px;
-    /* Spacing below caption to image */
-    text-align: center;
-    width: 100%;
-    writing-mode: horizontal-tb !important;
-    /* Force horizontal caption */
-}
-
-.vertical-line-marker {
-    display: none;
-    /* removed for now */
-}
-
-/* Footer */
-.odp-footer {
-    border-top: 1px solid #ccc;
-    padding-top: 5px;
-    margin-top: 10px;
-    /* Reduced margin */
-    display: flex;
-    justify-content: space-between;
-    font-size: 8pt;
-    text-transform: uppercase;
-    color: #000 !important;
-    /* Force black text */
-    background: transparent !important;
-    /* Force no bg */
-    font-weight: normal !important;
-    /* Force no bold */
-}
-
-.odp-footer .label {
-    color: #666;
-    margin-right: 5px;
-}
-
-.odp-footer .value {
-    font-weight: normal !important;
-    color: black !important;
-}
-
-/* Print Styles */
-@media print {
-    @page {
-        size: letter;
-        margin: 0;
+    /* Section Header */
+    .section-header {
+        background: var(--theme-primary);
+        color: white;
+        padding: 2px 0;
+        /* thinner */
+        font-size: 9pt;
+        text-transform: uppercase;
+        text-align: center;
+        /* Center like main header */
+        margin-bottom: 5px;
+        font-weight: normal;
     }
 
-    /* FORCE LETTER, NO MARGIN */
-
-    body {
-        background: white;
-        height: auto;
-        overflow: visible;
-    }
-
-    .editor-panel,
-    .actions-footer,
-    .preview-toolbar,
-    .logo,
-    .subtitle {
-        display: none !important;
-    }
-
-    .app-container {
-        display: block;
-        height: auto;
-    }
-
-    .preview-panel {
-        padding: 0;
-        background: white;
-        overflow: visible;
-    }
-
-    .paper-canvas-wrapper {
-        display: block;
-        overflow: visible;
-        padding: 0;
-    }
-
-    .paper-a4 {
-        box-shadow: none;
-        margin: 0;
+    .images-preview-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: center;
+        /* Center content */
+        align-content: flex-start;
+        gap: 10px;
         width: 100%;
-        height: 279mm;
-        /* Fixed page height */
-        padding: 5mm;
-        page-break-after: always;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    }
+
+    .preview-image-wrapper {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        margin-bottom: 25px;
+        /* Space for bottom arrow */
+        margin-right: 25px;
+        /* Space for right arrow */
+    }
+
+    /* Container defining standard positioning context for arrows */
+    .preview-image-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .preview-image-container img {
+        width: 100%;
+        display: block;
+        height: auto;
+        object-fit: contain;
+        border: 1px solid #eee;
+        /* Subtle border to define edge */
+    }
+
+    /* Dimensions Common */
+    .dim-line {
+        position: absolute;
+        background: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Arrowheads using pseudo-elements */
+    .dim-line::before,
+    .dim-line::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+    }
+
+    /* Horizontal Dimension Lower */
+    .dim-h {
+        bottom: -15px;
+        /* Distance from image */
+        left: 0;
+        width: 100%;
+        height: 1px;
+        /* Line thickness */
+        border-left: 1px solid #333;
+        /* End caps */
+        border-right: 1px solid #333;
+    }
+
+    .dim-h::before {
+        left: 0;
+        top: -2px;
+        border-width: 3px 6px 3px 0;
+        border-color: transparent #333 transparent transparent;
+    }
+
+    .dim-h::after {
+        right: 0;
+        top: -2px;
+        border-width: 3px 0 3px 6px;
+        border-color: transparent transparent transparent #333;
+    }
+
+    .dim-h .dim-label {
+        background: white;
+        padding: 0 4px;
+        font-size: 7pt;
+        color: #333;
+        margin-top: 8px;
+        /* Push text below line */
+    }
+
+    /* Vertical Dimension Right */
+    .dim-v {
+        top: 0;
+        right: -15px;
+        /* Distance from image */
+        height: 100%;
+        width: 1px;
+        border-top: 1px solid #333;
+        /* End caps */
+        border-bottom: 1px solid #333;
+    }
+
+    .dim-v::before {
+        top: 0;
+        left: -2px;
+        border-width: 0 3px 6px 3px;
+        border-color: transparent transparent #333 transparent;
+    }
+
+    .dim-v::after {
+        bottom: 0;
+        left: -2px;
+        border-width: 6px 3px 0 3px;
+        border-color: #333 transparent transparent transparent;
+    }
+
+    .dim-v .dim-label {
+        background: white;
+        padding: 4px 0;
+        font-size: 7pt;
+        color: #333;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        /* Read upwards */
+        margin-left: 8px;
+        /* Push text right of line */
+    }
+
+    .img-caption {
+        font-size: 8pt;
+        font-style: italic;
+        color: #666;
+        margin-bottom: 5px;
+        /* Spacing below caption to image */
+        text-align: center;
+        width: 100%;
+        writing-mode: horizontal-tb !important;
+        /* Force horizontal caption */
+    }
+
+    .vertical-line-marker {
+        display: none;
+        /* removed for now */
+    }
+
+    /* Footer */
+    .odp-footer {
+        border-top: 1px solid #ccc;
+        padding-top: 5px;
+        margin-top: 10px;
+        /* Reduced margin */
+        display: flex;
         justify-content: space-between;
-        /* Push footer down */
-        overflow: hidden;
-        /* Hide anything that spills over */
+        font-size: 8pt;
+        text-transform: uppercase;
+        color: #000 !important;
+        /* Force black text */
+        background: transparent !important;
+        /* Force no bg */
+        font-weight: normal !important;
+        /* Force no bold */
     }
 
-    .observations-box {
-        page-break-inside: avoid;
-        margin-bottom: 2mm;
+    .odp-footer .label {
+        color: #666;
+        margin-right: 5px;
     }
 
-    .visual-reference-area {
-        flex: 1;
-        /* Grow to fill space */
-        min-height: 0;
-        overflow: hidden;
+    .odp-footer .value {
+        font-weight: normal !important;
+        color: black !important;
     }
-}
+
+    /* Print Styles */
+    @media print {
+        @page {
+            size: letter;
+            margin: 0;
+        }
+
+        /* FORCE LETTER, NO MARGIN */
+
+        body {
+            background: white;
+            height: auto;
+            overflow: visible;
+        }
+
+        .editor-panel,
+        .actions-footer,
+        .preview-toolbar,
+        .logo,
+        .subtitle {
+            display: none !important;
+        }
+
+        .app-container {
+            display: block;
+            height: auto;
+        }
+
+        .preview-panel {
+            padding: 0;
+            background: white;
+            overflow: visible;
+        }
+
+        .paper-canvas-wrapper {
+            display: block;
+            overflow: visible;
+            padding: 0;
+        }
+
+        .paper-a4 {
+            box-shadow: none;
+            margin: 0;
+            width: 100%;
+            height: 279mm;
+            /* Fixed page height */
+            padding: 5mm;
+            page-break-after: always;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* Push footer down */
+            overflow: hidden;
+            /* Hide anything that spills over */
+        }
+
+        .observations-box {
+            page-break-inside: avoid;
+            margin-bottom: 2mm;
+        }
+
+        .visual-reference-area {
+            flex: 1;
+            /* Grow to fill space */
+            min-height: 0;
+            overflow: hidden;
+        }
+    }
