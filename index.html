@@ -6,6 +6,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creador de ODP - Studio Sync</title>
     <link rel="stylesheet" href="styles.css">
+    <style media="print">
+        @page {
+            size: letter;
+            margin: 0mm;
+        }
+
+        /* Essential Color Printing */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* GLOBAL HIDE - Hide everything by default */
+        body>* {
+            display: none !important;
+        }
+
+        /* RESTORE CONTENT - Only show the app container (modified) */
+        body>.app-container {
+            display: block !important;
+            height: auto !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* Hide the Sidebar specifically within app-container */
+        .editor-panel,
+        aside,
+        .actions-footer,
+        .preview-toolbar,
+        .zoom-controls,
+        #odpForm,
+        .logo,
+        .subtitle,
+        .file-upload-container,
+        .btn-primary {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* Fix Body */
+        body {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* Fix Preview Panel */
+        .preview-panel {
+            display: block !important;
+            background: white !important;
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            border: none !important;
+        }
+
+        /* Fix Canvas Wrapper */
+        .paper-canvas-wrapper {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* The Paper Sheets */
+        .paper-a4 {
+            /* Reset any Zoom Transforms */
+            transform: none !important;
+            margin: 0 !important;
+
+            /* Sizing */
+            width: 100% !important;
+            max-width: 215.9mm !important;
+            min-height: 279.4mm !important;
+            height: auto !important;
+
+            /* Visuals */
+            box-shadow: none !important;
+            border: none !important;
+            padding: 5mm !important;
+
+            /* Breaking */
+            page-break-after: always !important;
+            break-after: page !important;
+
+            /* Layout */
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* Avoid break after the last page if possible */
+        .paper-a4:last-child {
+            page-break-after: avoid !important;
+        }
+
+        /* Ensure images and colors show */
+        img {
+            max-width: 100% !important;
+        }
+
+        /* Specific element tweaks */
+        .odp-header,
+        .odp-footer {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Ensure dynamic pages behave */
+        .dynamic-page {
+            margin-top: 0 !important;
+        }
+    </style>
 
     <!-- Google Fonts for Premium Feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
