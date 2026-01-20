@@ -10,13 +10,11 @@
     /* Paper Print Colors - Dynamic Defaults */
     --paper-bg: white;
     --paper-text: #1e293b;
-    --theme-primary: #666;
-    /* Default Header Gray */
+    --theme-primary: #374e6c;
+    /* Palace Blue Default */
     --theme-border: #999;
     --theme-cell-bg: white;
-    /* Default value background */
     --theme-text-values: #7e22ce;
-    /* Current purple */
 }
 
 /* Theme Overrides */
@@ -173,7 +171,21 @@ body {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Processes Checkbox Grid */
+/* Select Options Styling for better readability */
+.input-group select option {
+    background: #1e293b;
+    /* Dark background matching theme */
+    color: white;
+}
+
+.items-table td {
+    border: 1px solid var(--theme-border);
+    padding: 3px 6px;
+    /* tight */
+    vertical-align: top;
+    /* height: 100px; Removed forced height */
+}
+
 .processes-group .checkbox-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -464,16 +476,13 @@ body {
     border: 1px solid var(--theme-border);
 }
 
+/* Already defined above or needs redefine here if I messed up order. 
+   Actually, let's just clean this block. */
 .items-table td {
     border: 1px solid var(--theme-border);
     padding: 3px 6px;
-    /* tight */
     vertical-align: top;
-    height: 100px;
-    /* Force minimum height for item cells */
-}
-
-padding: 6px 8px;
+    /* height removed */
 }
 
 .col-cant {
