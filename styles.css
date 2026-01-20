@@ -750,93 +750,122 @@ body {
     @media print {
         @page {
             size: letter;
-            margin: 0;
+            margin: 0mm;
         }
 
-        /* Explicitly hide the sidebar and everything else */
-        body>div.app-container>aside.editor-panel,
-        .editor-panel,
-        .actions-footer,
-        .preview-toolbar,
-        .logo,
-        .subtitle,
-        .zoom-controls,
-        aside,
-        .form-section {
+        /* Essential Color Printing */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* GLOBAL HIDE - Hide everything by default */
+        body>* {
             display: none !important;
         }
 
-        /* Reset Body */
+        /* RESTORE CONTENT - Only show the app container (modified) */
+        body>.app-container {
+            display: block !important;
+            height: auto !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* Hide the Sidebar specifically within app-container */
+        .editor-panel,
+        aside,
+        .actions-footer,
+        .preview-toolbar,
+        .zoom-controls,
+        #odpForm,
+        .logo,
+        .subtitle,
+        .file-upload-container,
+        .btn-primary {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* Fix Body */
         body {
             background: white !important;
-            height: auto !important;
-            width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
             overflow: visible !important;
         }
 
-        /* Container Adjustment */
-        .app-container {
-            display: block !important;
-            width: 100% !important;
-            height: auto !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            position: static !important;
-        }
-
-        /* Ensure Preview Panel is clean */
+        /* Fix Preview Panel */
         .preview-panel {
             display: block !important;
+            background: white !important;
             width: 100% !important;
+            height: auto !important;
             margin: 0 !important;
             padding: 0 !important;
-            background: white !important;
             overflow: visible !important;
-            position: static !important;
+            border: none !important;
         }
 
-        /* Paper Styles for Print */
-        .paper-a4 {
-            /* Force exact letter size for print context */
-            width: 215.9mm !important;
-            height: 279.4mm !important;
+        /* Fix Canvas Wrapper */
+        .paper-canvas-wrapper {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+            padding: 0 !important;
             margin: 0 !important;
-            padding: 5mm !important;
+            overflow: visible !important;
+        }
+
+        /* The Paper Sheets */
+        .paper-a4 {
+            /* Reset any Zoom Transforms */
+            transform: none !important;
+            margin: 0 !important;
+
+            /* Sizing */
+            width: 100% !important;
+            max-width: 215.9mm !important;
+            min-height: 279.4mm !important;
+            height: auto !important;
+
+            /* Visuals */
             box-shadow: none !important;
+            border: none !important;
+            padding: 5mm !important;
+
+            /* Breaking */
             page-break-after: always !important;
             break-after: page !important;
 
-            /* Enable Flex/Grid for content but ensure correct sizing */
+            /* Layout */
             display: flex !important;
             flex-direction: column !important;
-            justify-content: space-between !important;
-
-            position: relative !important;
-            left: 0 !important;
-            top: 0 !important;
         }
 
-        /* Hide the wrapper scrollbars */
-        .paper-canvas-wrapper {
-            display: block !important;
-            overflow: visible !important;
-            height: auto !important;
-            padding: 0 !important;
-            margin: 0 !important;
+        /* Avoid break after the last page if possible */
+        .paper-a4:last-child {
+            page-break-after: avoid !important;
         }
 
-        /* Adjust footer/visual area */
-        .visual-reference-area {
-            flex: 1;
-            overflow: hidden;
-            display: block !important;
-            /* Fix potential flex hide */
+        /* Ensure images and colors show */
+        img {
+            max-width: 100% !important;
         }
 
+        /* Specific element tweaks */
+        .odp-header,
         .odp-footer {
-            /* ensure footer shows */
-            display: flex !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Ensure dynamic pages behave */
+        .dynamic-page {
+            margin-top: 0 !important;
         }
     }
