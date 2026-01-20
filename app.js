@@ -45,25 +45,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const paper = document.getElementById('odpPaper');
         const footerLogo = document.getElementById('footerLogo');
         let logoSrc = 'assets/logo_tpc.webp'; // Default
+        let logoHeight = '40px'; // Default height
 
         // Reset classes but keep base
         paper.className = 'paper-a4';
 
         if (propiedadName.includes('Jamaica')) {
             paper.classList.add('theme-jamaica');
-            // No specific logo provided for Jamaica, keeping default
+            logoSrc = 'assets/logo_tpc.webp'; // Explicitly assign TPC logo
+            logoHeight = '40px';
         } else if (propiedadName.includes('Los Cabos')) {
             paper.classList.add('theme-lbcab');
             logoSrc = 'assets/logo_lbcab.webp';
+            logoHeight = '80px'; // Double size for Le Blanc
         } else if (propiedadName.includes('Cancun') && propiedadName.includes('Le Blanc')) {
             paper.classList.add('theme-lbcun');
             logoSrc = 'assets/logo_lbcun.webp';
+            logoHeight = '80px'; // Double size for Le Blanc
         } else if (propiedadName.includes('Punta Cana') && propiedadName.includes('Moon Palace')) {
             paper.classList.add('theme-mppc');
             logoSrc = 'assets/logo_mppc.webp';
+            logoHeight = '80px'; // Double size for MPPC
         }
 
-        if (footerLogo) footerLogo.src = logoSrc;
+        if (footerLogo) {
+            footerLogo.src = logoSrc;
+            footerLogo.style.height = logoHeight;
+        }
     }
     // Observations
     document.getElementById('observaciones').addEventListener('input', (e) => {
