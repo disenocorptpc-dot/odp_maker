@@ -752,7 +752,21 @@ body {
             margin: 0;
         }
 
-        /* FORCE LETTER, NO MARGIN */
+        /* Hide UI elements */
+        .editor-panel,
+        .actions-footer,
+        .preview-toolbar,
+        .logo,
+        .subtitle,
+        .zoom-controls,
+        aside,
+        /* Just in case */
+        .form-section {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
 
         body {
             background: white;
@@ -760,17 +774,12 @@ body {
             overflow: visible;
         }
 
-        .editor-panel,
-        .actions-footer,
-        .preview-toolbar,
-        .logo,
-        .subtitle {
-            display: none !important;
-        }
-
         .app-container {
-            display: block;
-            height: auto;
+            display: block !important;
+            height: auto !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         .preview-panel {

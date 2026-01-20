@@ -208,22 +208,144 @@ document.addEventListener('DOMContentLoaded', () => {
     const imagesListEl = document.getElementById('imagesEditorList');
     const imagesPreviewEl = document.getElementById('imagesPreviewContainer');
     const dropZone = document.querySelector('.file-drop-zone');
-
-    // Page 2 Logic
-    const usePage2Checkbox = document.getElementById('usePage2');
     const odpPage2 = document.getElementById('odpPage2');
     const imagesPreviewPage2 = document.getElementById('imagesPreviewContainerPage2');
 
-    if (usePage2Checkbox) {
-        usePage2Checkbox.addEventListener('change', () => {
-            renderPreviewImages();
-            // Re-apply theme to ensure page 2 gets classes
-            const prop = document.getElementById('propiedad').value;
-            applyTheme(prop);
+    // Drag & Drop
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--primary)'; });
+    dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--border-color)'; });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--border-color)';
+        if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+    });
+
+    imageUpload.addEventListener('change', (e) => {
+        if (e.target.files) handleFiles(e.target.files);
+    });
+
+    function handleFiles(fileList) {
+        Array.from(fileList).forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                addImage(e.target.result, file.name);
+            };
+            reader.readAsDataURL(file);
         });
     }
 
-    // Drag & Drop
+    function addImage(url, name) {
+        const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        // Default scale 100%, dims empty, page 1
+        imagesState.push({ id, url, name, scale: 100, dimW: '', dimH: '', page: 1 });
+        renderEditorImages();
+        renderPreviewImages();
+    }
+
+    function removeImage(id) {
+        imagesState = imagesState.filter(img => img.id !== id);
+        renderEditorImages();
+        renderPreviewImages();
+    }
+
+    function updateImageState(id, key, value) {
+        const img = imagesState.find(i => i.id === id);
+        if (img) {
+            img[key] = value;
+            renderPreviewImages();
+            // If page changed, we might need to update theme on page 2 just in case it wasn't visible
+            if (key === 'page') {
+                const prop = document.getElementById('propiedad').value;
+                applyTheme(prop);
+            }
+        }
+    }
+
+    function renderEditorImages() {
+        imagesListEl.innerHTML = '';
+        imagesState.forEach(img => {
+            const div = document.createElement('div');
+            div.className = 'editor-image-control';
+            div.innerHTML = `
+                <img src="${img.url}" class="thumbs-prev">
+                <div class="img-control-details">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span class="img-name" title="${img.name}">${img.name}</span>
+                        <button class="delete-btn" data-id="${img.id}">X</button>
+                    </div>
+                    <!-- Zoom Slider -->
+                    <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                         <span style="font-size:0.7rem; color:#888;">Tamaño:</span>
+                         <input type="range" class="img-slider" min="5" max="100" value="${img.scale}" data-id="${img.id}" data-key="scale" style="flex:1;">
+                    </div>
+                    <!-- Dimensions Inputs -->
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom: 5px;">
+                        <input type="text" placeholder="Ancho (mm)" value="${img.dimW || ''}" data-id="${img.id}" data-key="dimW" style="font-size:0.7rem; padding:2px;">
+                        <input type="text" placeholder="Alto (mm)" value="${img.dimH || ''}" data-id="${img.id}" data-key="dimH" style="font-size:0.7rem; padding:2px;">
+                    </div>
+                    <!-- Page 2 Checkbox -->
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <input type="checkbox" id="page2-${img.id}" ${img.page === 2 ? 'checked' : ''} data-id="${img.id}" data-key="page" style="width:auto;">
+                        <label for="page2-${img.id}" style="font-size:0.7rem; color:#ccc; margin:0; cursor:pointer;">Mover a Hoja 2</label>
+                    </div>
+                </div>
+            `;
+            imagesListEl.appendChild(div);
+        });
+
+        // Listeners
+        imagesListEl.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => removeImage(e.target.dataset.id)));
+
+        // Inputs
+        imagesListEl.querySelectorAll('input[type="range"], input[type="text"]').forEach(input => {
+            input.addEventListener('input', (e) => updateImageState(e.target.dataset.id, e.target.dataset.key, e.target.value));
+        });
+
+        // Checkboxes
+        imagesListEl.querySelectorAll('input[type="checkbox"]').forEach(input => {
+            input.addEventListener('change', (e) => updateImageState(e.target.dataset.id, 'page', e.target.checked ? 2 : 1));
+        });
+    }
+
+    function renderPreviewImages() {
+        // Clear both
+        imagesPreviewEl.innerHTML = '';
+        if (imagesPreviewPage2) imagesPreviewPage2.innerHTML = '';
+
+        let hasPage2 = false;
+
+        imagesState.forEach(img => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'preview-image-wrapper';
+            wrapper.style.width = `${img.scale}%`;
+
+            const dimH_HTML = img.dimW ? `<div class="dim-line dim-h"><span class="dim-label">${img.dimW}</span></div>` : '';
+            const dimV_HTML = img.dimH ? `<div class="dim-line dim-v"><span class="dim-label">${img.dimH}</span></div>` : '';
+
+            wrapper.innerHTML = `
+                <div class="img-caption">${img.name}</div>
+                <div class="preview-image-container">
+                    <img src="${img.url}" alt="${img.name}">
+                    ${dimH_HTML}
+                    ${dimV_HTML}
+                </div>
+            `;
+
+            // Distribute
+            if (img.page === 2 && imagesPreviewPage2) {
+                imagesPreviewPage2.appendChild(wrapper);
+                hasPage2 = true;
+            } else {
+                imagesPreviewEl.appendChild(wrapper);
+            }
+        });
+
+        // Toggle Page 2 Display
+        if (odpPage2) {
+            odpPage2.style.display = hasPage2 ? 'flex' : 'none';
+        }
+    }
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--primary)'; });
     dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--border-color)'; });
     dropZone.addEventListener('drop', (e) => {
