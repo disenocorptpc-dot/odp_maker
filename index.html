@@ -150,6 +150,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-section">
+                    <h3>Paginación</h3>
+                    <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="usePage2" style="width: auto;">
+                        <label for="usePage2" style="margin: 0; color: white;">Mover imágenes a Hoja 2</label>
+                    </div>
+                </div>
             </form>
 
             <div class="actions-footer">
@@ -278,9 +285,75 @@
                         </div>
                     </footer>
                 </div>
+
+                <!-- Page 2 for Images -->
+                <div id="odpPage2" class="paper-a4" style="display: none; margin-top: 2rem;">
+                    <!-- Minimal Header for Page 2 -->
+                    <div class="odp-header">
+                        <h2>Referencia Visual (Cont.)</h2>
+                    </div>
+
+                    <div class="visual-reference-area" style="flex: 1;">
+                        <div id="imagesPreviewContainerPage2" class="images-preview-grid">
+                            <!-- Dynamic Images Page 2 -->
+                        </div>
+                    </div>
+
+                    <footer class="odp-footer">
+                        <div class="footer-center" style="width: 100%; text-align: center;">
+                            <img id="footerLogoPage2" src="assets/logo_tpc.webp" alt="Logo"
+                                style="height: 40px; object-fit: contain;">
+                        </div>
+                    </footer>
+                </div>
             </div>
         </main>
     </div>
+
+    <!-- Datalist for Materials -->
+    <datalist id="materialOptions">
+        <option value="Estireno 30 ptos"></option>
+        <option value="Estireno 60 ptos"></option>
+        <option value="Estireno 100 ptos"></option>
+        <option value="Trovicel 3mm Blanco"></option>
+        <option value="Trovicel 3mm Negro"></option>
+        <option value="Trovicel 6mm Blanco"></option>
+        <option value="Trovicel 6mm Negro"></option>
+        <option value="Trovicel 9mm Blanco"></option>
+        <option value="Trovicel 9mm Negro"></option>
+        <option value="Trovicel 24mm Blanco"></option>
+        <option value="Trovicel 24mm Negro"></option>
+        <option value="HDPE Blanco"></option>
+        <option value="HDPE Negro"></option>
+        <option value="HDPE Negro-Blanco-Negro"></option>
+        <option value="HDPE Verde-Blanco-Verde"></option>
+        <option value="Acrílico 3mm Transparente"></option>
+        <option value="Acrílico 3mm Blanco"></option>
+        <option value="Acrílico 3mm Negro"></option>
+        <option value="Acrílico 6mm Transparente"></option>
+        <option value="Acrílico 6mm Blanco"></option>
+        <option value="Acrílico 6mm Negro"></option>
+        <option value="Acrílico 9mm Transparente"></option>
+        <option value="Acrílico 9mm Blanco"></option>
+        <option value="Acrílico 9mm Negro"></option>
+        <option value="Acrílico 12mm Transparente"></option>
+        <option value="Acrílico 12mm Blanco"></option>
+        <option value="Acrílico 12mm Negro"></option>
+        <option value="Triplay 3mm"></option>
+        <option value="Triplay 6mm"></option>
+        <option value="Triplay 9mm"></option>
+        <option value="Triplay 12mm"></option>
+        <option value="Triplay 15mm"></option>
+        <option value="Triplay 18mm"></option>
+        <option value="Triplay 24mm"></option>
+        <option value="Panel Alu 4mm Negro"></option>
+        <option value="Panel Alu 4mm Blanco"></option>
+        <option value="Panel Alu 4mm Plata Cepillado"></option>
+        <option value="Panel Alu 4mm Dorado"></option>
+        <option value="Panel Alu 4mm Plata Liso"></option>
+        <option value="Panel Alu 4mm Champagne"></option>
+        <option value="Tela Sublimada"></option>
+    </datalist>
 
     <script src="app.js"></script>
 </body>

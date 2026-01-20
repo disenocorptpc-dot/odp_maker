@@ -44,33 +44,47 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyTheme(propiedadName) {
         const paper = document.getElementById('odpPaper');
         const footerLogo = document.getElementById('footerLogo');
+        const odpPage2 = document.getElementById('odpPage2');
+        const footerLogo2 = document.getElementById('footerLogoPage2');
+
         let logoSrc = 'assets/logo_tpc.webp'; // Default
-        let logoHeight = '40px'; // Default height
+        let logoHeight = '40px';
+        let themeClass = '';
 
         // Reset classes but keep base
         paper.className = 'paper-a4';
+        if (odpPage2) odpPage2.className = 'paper-a4';
 
         if (propiedadName.includes('Jamaica')) {
-            paper.classList.add('theme-jamaica');
-            logoSrc = 'assets/logo_tpc.webp'; // Explicitly assign TPC logo
+            themeClass = 'theme-jamaica';
+            logoSrc = 'assets/logo_tpc.webp';
             logoHeight = '40px';
         } else if (propiedadName.includes('Los Cabos')) {
-            paper.classList.add('theme-lbcab');
+            themeClass = 'theme-lbcab';
             logoSrc = 'assets/logo_lbcab.webp';
-            logoHeight = '50px'; // Adjusted for cropped logo
+            logoHeight = '50px';
         } else if (propiedadName.includes('Cancun') && propiedadName.includes('Le Blanc')) {
-            paper.classList.add('theme-lbcun');
+            themeClass = 'theme-lbcun';
             logoSrc = 'assets/logo_lbcun.webp';
-            logoHeight = '50px'; // Adjusted for cropped logo
+            logoHeight = '50px';
         } else if (propiedadName.includes('Punta Cana') && propiedadName.includes('Moon Palace')) {
-            paper.classList.add('theme-mppc');
+            themeClass = 'theme-mppc';
             logoSrc = 'assets/logo_mppc.webp';
-            logoHeight = '50px'; // Adjusted for cropped logo
+            logoHeight = '50px';
+        }
+
+        if (themeClass) {
+            paper.classList.add(themeClass);
+            if (odpPage2) odpPage2.classList.add(themeClass);
         }
 
         if (footerLogo) {
             footerLogo.src = logoSrc;
             footerLogo.style.height = logoHeight;
+        }
+        if (footerLogo2) {
+            footerLogo2.src = logoSrc;
+            footerLogo2.style.height = logoHeight;
         }
     }
     // Observations
@@ -149,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <!-- Description Construction -->
                 <input type="text" placeholder="Nombre Archivo" value="${item.archivo}" data-id="${item.id}" data-field="archivo" style="margin-bottom:0.5rem">
-                <input type="text" placeholder="Material/Técnica" value="${item.material}" data-id="${item.id}" data-field="material" style="margin-bottom:0.5rem">
+                <input type="text" placeholder="Material/Técnica" list="materialOptions" value="${item.material}" data-id="${item.id}" data-field="material" style="margin-bottom:0.5rem">
                 <input type="text" placeholder="Medidas Finales" value="${item.medidas}" data-id="${item.id}" data-field="medidas">
             `;
             itemsContainer.appendChild(row);
@@ -194,6 +208,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const imagesListEl = document.getElementById('imagesEditorList');
     const imagesPreviewEl = document.getElementById('imagesPreviewContainer');
     const dropZone = document.querySelector('.file-drop-zone');
+
+    // Page 2 Logic
+    const usePage2Checkbox = document.getElementById('usePage2');
+    const odpPage2 = document.getElementById('odpPage2');
+    const imagesPreviewPage2 = document.getElementById('imagesPreviewContainerPage2');
+
+    if (usePage2Checkbox) {
+        usePage2Checkbox.addEventListener('change', () => {
+            renderPreviewImages();
+            // Re-apply theme to ensure page 2 gets classes
+            const prop = document.getElementById('propiedad').value;
+            applyTheme(prop);
+        });
+    }
 
     // Drag & Drop
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--primary)'; });
@@ -278,7 +306,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPreviewImages() {
-        imagesPreviewEl.innerHTML = '';
+        // Page 2 Check
+        const usePage2 = usePage2Checkbox ? usePage2Checkbox.checked : false;
+
+        // Decide where to render
+        const targetContainer = usePage2 ? imagesPreviewPage2 : imagesPreviewEl;
+        const otherContainer = usePage2 ? imagesPreviewEl : imagesPreviewPage2;
+
+        // Toggle Page 2 Display
+        if (odpPage2) {
+            odpPage2.style.display = usePage2 ? 'flex' : 'none';
+        }
+
+        // Clear both initially
+        if (targetContainer) targetContainer.innerHTML = '';
+        if (otherContainer) otherContainer.innerHTML = '';
+
+        if (!targetContainer) return;
+
         imagesState.forEach(img => {
             const wrapper = document.createElement('div');
             wrapper.className = 'preview-image-wrapper';
@@ -303,9 +348,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${dimV_HTML}
                 </div>
             `;
-            imagesPreviewEl.appendChild(wrapper);
+            targetContainer.appendChild(wrapper);
         });
     }
+
 
     // --- Helpers ---
     function updatePreview(fieldId, value) {
