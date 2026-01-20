@@ -57,15 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (propiedadName.includes('Los Cabos')) {
             paper.classList.add('theme-lbcab');
             logoSrc = 'assets/logo_lbcab.webp';
-            logoHeight = '80px'; // Double size for Le Blanc
+            logoHeight = '50px'; // Adjusted for cropped logo
         } else if (propiedadName.includes('Cancun') && propiedadName.includes('Le Blanc')) {
             paper.classList.add('theme-lbcun');
             logoSrc = 'assets/logo_lbcun.webp';
-            logoHeight = '80px'; // Double size for Le Blanc
+            logoHeight = '50px'; // Adjusted for cropped logo
         } else if (propiedadName.includes('Punta Cana') && propiedadName.includes('Moon Palace')) {
             paper.classList.add('theme-mppc');
             logoSrc = 'assets/logo_mppc.webp';
-            logoHeight = '80px'; // Double size for MPPC
+            logoHeight = '50px'; // Adjusted for cropped logo
         }
 
         if (footerLogo) {
