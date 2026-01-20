@@ -370,11 +370,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addImage(url, name) {
+        // Prevent accidental duplicates (same name)
+        if (imagesState.some(img => img.name === name)) {
+            return;
+        }
+
         const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
         // Default scale 100%, dims empty, page 1 (default)
-        // Check duplication? Name based? No, ID is unique. User complained about duplication on add.
-        // It's likely because 'change' AND 'drop' might both fire? Or handleFiles logic.
-        // But let's just push unique.
         imagesState.push({ id, url, name, scale: 100, dimW: '', dimH: '', page: 1 });
         renderEditorImages();
         renderPreviewImages();
