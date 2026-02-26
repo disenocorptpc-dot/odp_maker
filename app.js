@@ -7,8 +7,26 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePreview('fecha', formattedDate);
 
     // State
-    let itemsState = []; // { id, cant, archivo, material, medidas }
+    let itemsState = []; // { id, cant, archivo, material, medidas, llevaOjillos, ojillosCada }
     let imagesState = []; // { id, url, name, scale }
+
+    // Fetch dynamic materials from DB
+    window.addEventListener('dbLoaded', async () => {
+        if (window.odpDB) {
+            await window.odpDB.init();
+            const dynMats = await window.odpDB.getDynamicMaterials();
+            const datalist = document.getElementById('materialOptions');
+            const existing = Array.from(datalist.options).map(o => o.value.toLowerCase());
+
+            dynMats.forEach(m => {
+                if (m && !existing.includes(m.toLowerCase())) {
+                    const newOpt = document.createElement('option');
+                    newOpt.value = m;
+                    datalist.appendChild(newOpt);
+                }
+            });
+        }
+    });
 
     // --- 1. General Info Bindings ---
     const simpleIds = [
@@ -122,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addItem() {
         const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-        const newItem = { id, cant: 1, archivo: '', material: '', medidas: '' };
+        const newItem = { id, cant: 1, archivo: '', material: '', medidas: '', llevaOjillos: false, ojillosCada: '' };
         itemsState.push(newItem);
         renderEditorItems();
         renderPreviewItems();
@@ -139,6 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = itemsState.find(i => i.id === id);
         if (item) {
             item[field] = value;
+            if (field === 'material') {
+                const oContainer = document.getElementById(`ojillos-container-${id}`);
+                if (oContainer) {
+                    oContainer.style.display = (value.toLowerCase() === 'tela sublimada') ? 'flex' : 'none';
+                }
+            }
             renderPreviewItems(); // Only re-render preview, don't kill focus in editor
         }
     }
@@ -161,6 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- Description Construction -->
                 <input type="text" placeholder="Nombre Archivo" value="${item.archivo}" data-id="${item.id}" data-field="archivo" style="margin-bottom:0.5rem">
                 <input type="text" placeholder="Material/Técnica" list="materialOptions" value="${item.material}" data-id="${item.id}" data-field="material" style="margin-bottom:0.5rem">
+                
+                <div id="ojillos-container-${item.id}" style="display: ${item.material && item.material.toLowerCase() === 'tela sublimada' ? 'flex' : 'none'}; gap:0.5rem; margin-bottom:0.5rem; align-items:center; background: rgba(255, 255, 255, 0.05); padding: 0.5rem; border-radius: 6px;">
+                    <label style="color:#ccc; font-size:0.8rem; display:flex; align-items:center; gap:0.3rem; margin:0; cursor:pointer;">
+                        <input type="checkbox" data-id="${item.id}" data-field="llevaOjillos" ${item.llevaOjillos ? 'checked' : ''} style="margin:0; width:auto;"> Con ojillos
+                    </label>
+                    <input type="text" placeholder="¿Cada cuánto? Ej: 50cm" value="${item.ojillosCada || ''}" data-id="${item.id}" data-field="ojillosCada" style="margin:0; flex:1; padding: 0.4rem;">
+                </div>
+
                 <input type="text" placeholder="Medidas Finales" value="${item.medidas}" data-id="${item.id}" data-field="medidas">
             `;
             itemsContainer.appendChild(row);
@@ -168,9 +200,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Re-attach listeners to new DOM inputs
         itemsContainer.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', (e) => {
-                updateItemState(e.target.dataset.id, e.target.dataset.field, e.target.value);
-            });
+            if (input.type === 'checkbox') {
+                input.addEventListener('change', (e) => {
+                    updateItemState(e.target.dataset.id, e.target.dataset.field, e.target.checked);
+                });
+            } else {
+                input.addEventListener('input', (e) => {
+                    updateItemState(e.target.dataset.id, e.target.dataset.field, e.target.value);
+                });
+            }
+
+            // Save new material on blur
+            if (input.dataset.field === 'material') {
+                input.addEventListener('blur', (e) => {
+                    const val = typeof e.target.value === 'string' ? e.target.value.trim() : '';
+                    if (val && window.odpDB) {
+                        const datalist = document.getElementById('materialOptions');
+                        const options = Array.from(datalist.options).map(o => o.value.toLowerCase());
+                        if (!options.includes(val.toLowerCase())) {
+                            const newOpt = document.createElement('option');
+                            newOpt.value = val;
+                            datalist.appendChild(newOpt);
+                            window.odpDB.saveNewMaterial(val);
+                        }
+                    }
+                });
+            }
         });
 
         // Re-attach delete listeners
@@ -188,7 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Logic to build description string
             let descHtml = '';
             if (item.archivo) descHtml += `<strong>Archivo:</strong> ${item.archivo}`;
-            if (item.material) descHtml += `${descHtml ? ' | ' : ''}${item.material}`;
+
+            let materialExt = item.material || '';
+            if (item.material && item.material.toLowerCase() === 'tela sublimada' && item.llevaOjillos) {
+                materialExt += ` (Con ojillos ${item.ojillosCada ? 'cada ' + item.ojillosCada : ''})`;
+            }
+
+            if (materialExt) descHtml += `${descHtml ? ' | ' : ''}${materialExt}`;
             if (item.medidas) descHtml += `${descHtml ? ' | ' : ''}<strong>medidas finales:</strong> ${item.medidas}`;
 
             tr.innerHTML = `
