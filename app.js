@@ -651,6 +651,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Export entire application state to JSON
     document.getElementById('saveOdpBtn').addEventListener('click', () => {
+        const data = getProjectData();
+        const dataStr = JSON.stringify(data);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        
+        let tarea = document.getElementById('tareaClever').value.trim();
+        if (!tarea) tarea = 'ODP_Draft';
+        const filename = `${tarea}.odp`;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Import and restore application state from JSON
+    document.getElementById('loadOdpInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                applyProjectData(data);
+            } catch(err) {
+                console.error("Error cargando ODP:", err);
+                alert("Error al cargar el archivo ODP. Asegúrate de que sea válido.");
+            }
+            e.target.value = ""; // reset
+        };
+        reader.readAsText(file);
+    });
+
+    // --- 5. Project Data Extract & Apply ---
+    function getProjectData() {
         const data = {
             simpleFields: {},
             processChecks: {},
@@ -678,108 +717,135 @@ document.addEventListener('DOMContentLoaded', () => {
         const cVal = document.getElementById('acot-chaflan-val');
         if (cVal) data.simpleFields['acot-chaflan-val'] = cVal.value;
 
-        const dataStr = JSON.stringify(data);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        
-        let tarea = document.getElementById('tareaClever').value.trim();
-        if (!tarea) tarea = 'ODP_Draft';
-        const filename = `${tarea}.odp`;
+        return data;
+    }
 
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    });
-
-    // Import and restore application state from JSON
-    document.getElementById('loadOdpInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                const data = JSON.parse(event.target.result);
-                
-                // 1. Restore Simple Fields
-                if (data.simpleFields) {
-                    Object.keys(data.simpleFields).forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            el.value = data.simpleFields[id];
-                            updatePreview(id, data.simpleFields[id]);
-                            if (id === 'propiedad') applyTheme(data.simpleFields[id]);
-                            if (id === 'tareaClever') document.title = data.simpleFields[id] || "ODP Maker";
-                            // Trigger input to fire custom bindings (like acotaciones vals)
-                            el.dispatchEvent(new Event(el.tagName === 'SELECT' ? 'change' : 'input'));
-                        }
-                    });
+    function applyProjectData(data) {
+        // 1. Restore Simple Fields
+        if (data.simpleFields) {
+            Object.keys(data.simpleFields).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = data.simpleFields[id];
+                    updatePreview(id, data.simpleFields[id]);
+                    if (id === 'propiedad') applyTheme(data.simpleFields[id]);
+                    if (id === 'tareaClever') document.title = data.simpleFields[id] || "ODP Maker";
+                    // Trigger input to fire custom bindings (like acotaciones vals)
+                    el.dispatchEvent(new Event(el.tagName === 'SELECT' ? 'change' : 'input'));
                 }
+            });
+        }
 
-                // 2. Restore Process Checks
-                if (data.processChecks) {
-                    Object.keys(data.processChecks).forEach(proc => {
-                        let el = document.getElementById(`input-check-${proc}`);
-                        if (!el && proc.startsWith('acot-')) {
-                            el = document.getElementById(proc);
-                        }
-                        if (el) {
-                            el.checked = data.processChecks[proc];
-                            // Update normal preview checks
-                            if (!proc.startsWith('acot-')) {
-                                const preview = document.getElementById(`preview-check-${proc}`);
-                                if (preview) {
-                                    preview.textContent = el.checked ? 'X' : '';
-                                    preview.style.textAlign = 'center';
-                                    preview.style.fontWeight = 'bold';
-                                }
-                            }
-                        }
-                    });
-                    // Refresh acotaciones visibility
-                    if (typeof updateAcotaciones === 'function') updateAcotaciones();
+        // 2. Restore Process Checks
+        if (data.processChecks) {
+            Object.keys(data.processChecks).forEach(proc => {
+                let el = document.getElementById(`input-check-${proc}`);
+                if (!el && proc.startsWith('acot-')) {
+                    el = document.getElementById(proc);
                 }
-
-                // 3. Restore Observaciones
-                if (data.observaciones !== undefined) {
-                    const obsEl = document.getElementById('observaciones');
-                    if (obsEl) {
-                        obsEl.value = data.observaciones;
-                        document.querySelector('.display-observaciones').textContent = data.observaciones;
+                if (el) {
+                    el.checked = data.processChecks[proc];
+                    // Update normal preview checks
+                    if (!proc.startsWith('acot-')) {
+                        const preview = document.getElementById(`preview-check-${proc}`);
+                        if (preview) {
+                            preview.textContent = el.checked ? 'X' : '';
+                            preview.style.textAlign = 'center';
+                            preview.style.fontWeight = 'bold';
+                        }
                     }
                 }
+            });
+            // Refresh acotaciones visibility
+            if (typeof updateAcotaciones === 'function') updateAcotaciones();
+        }
 
-                // 4. Restore Internal State Objects
-                if (data.itemsState) {
-                    itemsState = data.itemsState;
-                    renderEditorItems();
-                }
-                
-                if (data.imagesState) {
-                    imagesState = data.imagesState;
-                    // Fix possible corrupted page values on load just in case
-                    imagesState.forEach(img => {
-                        if(!img.page) img.page = 1;
-                    });
-                    renderEditorImages();
-                }
-
-                // Always re-trigger the visual updates
-                renderPreviewItems();
-                renderPreviewImages();
-                
-            } catch(err) {
-                console.error("Error cargando ODP:", err);
-                alert("Error al cargar el archivo ODP. Asegúrate de que sea válido.");
+        // 3. Restore Observaciones
+        if (data.observaciones !== undefined) {
+            const obsEl = document.getElementById('observaciones');
+            if (obsEl) {
+                obsEl.value = data.observaciones;
+                document.querySelector('.display-observaciones').textContent = data.observaciones;
             }
-            e.target.value = ""; // reset
-        };
-        reader.readAsText(file);
-    });
+        }
+
+        // 4. Restore Internal State Objects
+        if (data.itemsState) {
+            itemsState = data.itemsState;
+            renderEditorItems();
+        }
+        
+        if (data.imagesState) {
+            imagesState = data.imagesState;
+            // Fix possible corrupted page values on load just in case
+            imagesState.forEach(img => {
+                if(!img.page) img.page = 1;
+            });
+            renderEditorImages();
+        }
+
+        // Always re-trigger the visual updates
+        renderPreviewItems();
+        renderPreviewImages();
+    }
+
+    // --- 6. Auto-Save Logic ---
+    let autoSaveTimeout = null;
+
+    function triggerAutoSave() {
+        if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            const data = getProjectData();
+            try {
+                localStorage.setItem('odp_autosave_state', JSON.stringify(data));
+                console.log("Auto-saved to localStorage.");
+            } catch (e) {
+                console.warn("Auto-save failed (QuotaExceededError). Purging heavy images and saving structure only...");
+                // Clone data to avoid purging active references
+                const lightData = JSON.parse(JSON.stringify(data));
+                if (lightData.imagesState) {
+                    lightData.imagesState.forEach(img => {
+                        img.url = ""; // Purge Base64 string
+                    });
+                }
+                try {
+                    localStorage.setItem('odp_autosave_state', JSON.stringify(lightData));
+                    console.log("Auto-saved (light version) to localStorage.");
+                } catch (err) {
+                    console.error("Auto-save failed completely.", err);
+                }
+            }
+        }, 1500); // 1.5s debounce
+    }
+
+    // Attach global listeners for auto-save
+    document.addEventListener('input', triggerAutoSave);
+    document.addEventListener('keyup', triggerAutoSave);
+    document.addEventListener('mouseup', triggerAutoSave);
+
+    // Load auto-save on init
+    const savedState = localStorage.getItem('odp_autosave_state');
+    if (savedState) {
+        try {
+            const data = JSON.parse(savedState);
+            applyProjectData(data);
+            console.log("Restored project from localStorage.");
+        } catch (e) {
+            console.error("Error parsing auto-saved data.", e);
+        }
+    }
+
+    // Clear project button logic
+    const clearBtn = document.getElementById('clearProjectBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm("¿Estás seguro de querer empezar de cero? Perderás todo el progreso no exportado y las imágenes cargadas.")) {
+                localStorage.removeItem('odp_autosave_state');
+                location.reload();
+            }
+        });
+    }
+
 
     // PDF/Print
     document.getElementById('printBtn').addEventListener('click', () => { window.print(); });
