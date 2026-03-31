@@ -212,6 +212,26 @@
                                 Calidad</label>
                         </div>
                     </div>
+
+                    <div class="input-group processes-group">
+                        <label>Acotaciones de Corte</label>
+                        <div class="checkbox-grid" style="grid-template-columns: 1fr;">
+                            <label class="check-label"><input type="checkbox" id="acot-corte-ext"> Corte Externo (Blanco)</label>
+                            <label class="check-label"><input type="checkbox" id="acot-corte-int"> Corte Interno (Rojo)</label>
+                            
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label class="check-label" style="flex:1"><input type="checkbox" id="acot-desbaste"> Desbaste + Profundidad (Azul)</label>
+                                <input type="text" id="acot-desbaste-val" placeholder="mm" style="width: 70px; padding: 4px; border:1px solid #444; background: #222; color: #fff; border-radius: 4px;">
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label class="check-label" style="flex:1"><input type="checkbox" id="acot-chaflan"> Chaflán + Ángulo (Verde)</label>
+                                <input type="text" id="acot-chaflan-val" placeholder="°" style="width: 70px; padding: 4px; border:1px solid #444; background: #222; color: #fff; border-radius: 4px;">
+                            </div>
+                            
+                            <label class="check-label"><input type="checkbox" id="acot-laser"> Grabado Láser (Negro sólido)</label>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section: Item Details (Dynamic) -->
@@ -385,6 +405,58 @@
                         <div id="imagesPreviewContainer" class="images-preview-grid">
                             <!-- Dynamic Images -->
                         </div>
+                    </div>
+
+                    <!-- Acotaciones Table (Hidden by default, shown if any checked) -->
+                    <div id="acotacionesContainer" style="display: none; margin-bottom: 5px; flex-shrink: 0;">
+                        <table class="acotaciones-table">
+                            <thead>
+                                <tr>
+                                    <th>Seleccionar</th>
+                                    <th>Proceso</th>
+                                    <th>Código de color</th>
+                                    <th>Parámetro Adicional</th>
+                                    <th>Unidades</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="row-acot-corte-ext" style="display:none">
+                                    <td style="font-weight:bold; font-size:10pt;">X</td>
+                                    <td>Corte Externo</td>
+                                    <td><div class="color-swatch" style="border-color: black; background: white;"></div></td>
+                                    <td>——</td>
+                                    <td>——</td>
+                                </tr>
+                                <tr id="row-acot-corte-int" style="display:none">
+                                    <td style="font-weight:bold; font-size:10pt;">X</td>
+                                    <td>Corte Interno</td>
+                                    <td><div class="color-swatch" style="border-color: red; background: white;"></div></td>
+                                    <td>——</td>
+                                    <td>——</td>
+                                </tr>
+                                <tr id="row-acot-desbaste" style="display:none">
+                                    <td style="font-weight:bold; font-size:10pt;">X</td>
+                                    <td>Desbaste + Profundidad</td>
+                                    <td><div class="color-swatch" style="border-color: #0ea5e9; background: white;"></div></td>
+                                    <td>Profundidad</td>
+                                    <td id="val-acot-desbaste">——</td>
+                                </tr>
+                                <tr id="row-acot-chaflan" style="display:none">
+                                    <td style="font-weight:bold; font-size:10pt;">X</td>
+                                    <td>Chaflán + Ángulo</td>
+                                    <td><div class="color-swatch" style="border-color: #22c55e; background: white;"></div></td>
+                                    <td>Ángulo</td>
+                                    <td id="val-acot-chaflan">——</td>
+                                </tr>
+                                <tr id="row-acot-laser" style="display:none">
+                                    <td style="font-weight:bold; font-size:10pt;">X</td>
+                                    <td>Grabado Láser</td>
+                                    <td><div class="color-swatch" style="background: black; border-color: black;"></div></td>
+                                    <td>——</td>
+                                    <td>——</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <!-- Observations Moved to Bottom -->

@@ -126,6 +126,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Acotaciones Bindings ---
+    const acotChecks = ['corte-ext', 'corte-int', 'desbaste', 'chaflan', 'laser'];
+    const acotContainer = document.getElementById('acotacionesContainer');
+
+    function updateAcotaciones() {
+        let anyChecked = false;
+        acotChecks.forEach(id => {
+            const cb = document.getElementById(`acot-${id}`);
+            const row = document.getElementById(`row-acot-${id}`);
+            if (cb && row) {
+                if (cb.checked) {
+                    row.style.display = 'table-row';
+                    anyChecked = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+        if (acotContainer) {
+            acotContainer.style.display = anyChecked ? 'block' : 'none';
+        }
+    }
+
+    acotChecks.forEach(id => {
+        const cb = document.getElementById(`acot-${id}`);
+        if(cb) cb.addEventListener('change', updateAcotaciones);
+    });
+
+    const desbasteVal = document.getElementById('acot-desbaste-val');
+    const chaflanVal = document.getElementById('acot-chaflan-val');
+    const valDesbasteDisp = document.getElementById('val-acot-desbaste');
+    const valChaflanDisp = document.getElementById('val-acot-chaflan');
+
+    if(desbasteVal && valDesbasteDisp) desbasteVal.addEventListener('input', (e) => valDesbasteDisp.textContent = e.target.value.trim() || '——');
+    if(chaflanVal && valChaflanDisp) chaflanVal.addEventListener('input', (e) => valChaflanDisp.textContent = e.target.value.trim() || '——');
+
+
     // --- 2. Dynamic Items Logic ---
     const itemsContainer = document.getElementById('itemsEditorContainer');
     const itemsTableBody = document.getElementById('itemsTableBody');
@@ -632,6 +669,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (el) data.processChecks[proc] = el.checked;
         });
 
+        acotChecks.forEach(id => {
+            const el = document.getElementById(`acot-${id}`);
+            if (el) data.processChecks[`acot-${id}`] = el.checked;
+        });
+        const dVal = document.getElementById('acot-desbaste-val');
+        if (dVal) data.simpleFields['acot-desbaste-val'] = dVal.value;
+        const cVal = document.getElementById('acot-chaflan-val');
+        if (cVal) data.simpleFields['acot-chaflan-val'] = cVal.value;
+
         const dataStr = JSON.stringify(data);
         const blob = new Blob([dataStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -668,6 +714,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             updatePreview(id, data.simpleFields[id]);
                             if (id === 'propiedad') applyTheme(data.simpleFields[id]);
                             if (id === 'tareaClever') document.title = data.simpleFields[id] || "ODP Maker";
+                            // Trigger input to fire custom bindings (like acotaciones vals)
+                            el.dispatchEvent(new Event(el.tagName === 'SELECT' ? 'change' : 'input'));
                         }
                     });
                 }
@@ -675,18 +723,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 2. Restore Process Checks
                 if (data.processChecks) {
                     Object.keys(data.processChecks).forEach(proc => {
-                        const el = document.getElementById(`input-check-${proc}`);
+                        let el = document.getElementById(`input-check-${proc}`);
+                        if (!el && proc.startsWith('acot-')) {
+                            el = document.getElementById(proc);
+                        }
                         if (el) {
                             el.checked = data.processChecks[proc];
-                            // Update preview manually like the event listener does
-                            const preview = document.getElementById(`preview-check-${proc}`);
-                            if (preview) {
-                                preview.textContent = el.checked ? 'X' : '';
-                                preview.style.textAlign = 'center';
-                                preview.style.fontWeight = 'bold';
+                            // Update normal preview checks
+                            if (!proc.startsWith('acot-')) {
+                                const preview = document.getElementById(`preview-check-${proc}`);
+                                if (preview) {
+                                    preview.textContent = el.checked ? 'X' : '';
+                                    preview.style.textAlign = 'center';
+                                    preview.style.fontWeight = 'bold';
+                                }
                             }
                         }
                     });
+                    // Refresh acotaciones visibility
+                    if (typeof updateAcotaciones === 'function') updateAcotaciones();
                 }
 
                 // 3. Restore Observaciones

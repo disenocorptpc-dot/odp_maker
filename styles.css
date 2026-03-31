@@ -439,6 +439,34 @@ body {
     font-size: 8pt;
 }
 
+/* Acotaciones Table */
+.acotaciones-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+    font-size: 8pt;
+    text-align: center;
+}
+.acotaciones-table th {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid var(--theme-border);
+    padding: 3px;
+    text-transform: uppercase;
+}
+.acotaciones-table td {
+    border: 1px solid var(--theme-border);
+    padding: 3px;
+    vertical-align: middle;
+}
+.color-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid;
+    vertical-align: middle;
+}
+
 /* Value cells background changes per theme */
 .info-table .value {
     background: var(--theme-cell-bg);
