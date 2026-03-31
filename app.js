@@ -791,8 +791,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 6. Auto-Save Logic ---
     let autoSaveTimeout = null;
+    let autoSaveDisabled = false;
 
     function triggerAutoSave() {
+        if (autoSaveDisabled) return;
         if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
         autoSaveTimeout = setTimeout(() => {
             const data = getProjectData();
@@ -838,10 +840,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clear project button logic
     const clearBtn = document.getElementById('clearProjectBtn');
     if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
+        clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             if (confirm("¿Estás seguro de querer empezar de cero? Perderás todo el progreso no exportado y las imágenes cargadas.")) {
+                autoSaveDisabled = true;
+                if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+                
                 localStorage.removeItem('odp_autosave_state');
-                location.reload();
+                
+                // Hard-reset everything to prevent browser cache
+                const form = document.querySelector('form');
+                if(form) form.reset();
+                itemsState = [{ id: Date.now(), line: 1, text: '' }];
+                imagesState = [];
+                
+                // Force a clean reload without cache
+                window.location.replace(window.location.pathname);
             }
         });
     }
