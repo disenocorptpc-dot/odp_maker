@@ -610,6 +610,122 @@ document.addEventListener('DOMContentLoaded', () => {
         subLabel.textContent = `${Math.round(currentScale * 100)}%`;
     }
 
+    // --- 4. Save/Load ODP Logic ---
+
+    // Export entire application state to JSON
+    document.getElementById('saveOdpBtn').addEventListener('click', () => {
+        const data = {
+            simpleFields: {},
+            processChecks: {},
+            itemsState: itemsState,
+            imagesState: imagesState,
+            observaciones: document.getElementById('observaciones').value
+        };
+
+        simpleIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data.simpleFields[id] = el.value;
+        });
+
+        processChecks.forEach(proc => {
+            const el = document.getElementById(`input-check-${proc}`);
+            if (el) data.processChecks[proc] = el.checked;
+        });
+
+        const dataStr = JSON.stringify(data);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        
+        let tarea = document.getElementById('tareaClever').value.trim();
+        if (!tarea) tarea = 'ODP_Draft';
+        const filename = `${tarea}.odp`;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Import and restore application state from JSON
+    document.getElementById('loadOdpInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                
+                // 1. Restore Simple Fields
+                if (data.simpleFields) {
+                    Object.keys(data.simpleFields).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.value = data.simpleFields[id];
+                            updatePreview(id, data.simpleFields[id]);
+                            if (id === 'propiedad') applyTheme(data.simpleFields[id]);
+                            if (id === 'tareaClever') document.title = data.simpleFields[id] || "ODP Maker";
+                        }
+                    });
+                }
+
+                // 2. Restore Process Checks
+                if (data.processChecks) {
+                    Object.keys(data.processChecks).forEach(proc => {
+                        const el = document.getElementById(`input-check-${proc}`);
+                        if (el) {
+                            el.checked = data.processChecks[proc];
+                            // Update preview manually like the event listener does
+                            const preview = document.getElementById(`preview-check-${proc}`);
+                            if (preview) {
+                                preview.textContent = el.checked ? 'X' : '';
+                                preview.style.textAlign = 'center';
+                                preview.style.fontWeight = 'bold';
+                            }
+                        }
+                    });
+                }
+
+                // 3. Restore Observaciones
+                if (data.observaciones !== undefined) {
+                    const obsEl = document.getElementById('observaciones');
+                    if (obsEl) {
+                        obsEl.value = data.observaciones;
+                        document.querySelector('.display-observaciones').textContent = data.observaciones;
+                    }
+                }
+
+                // 4. Restore Internal State Objects
+                if (data.itemsState) {
+                    itemsState = data.itemsState;
+                    renderEditorItems();
+                }
+                
+                if (data.imagesState) {
+                    imagesState = data.imagesState;
+                    // Fix possible corrupted page values on load just in case
+                    imagesState.forEach(img => {
+                        if(!img.page) img.page = 1;
+                    });
+                    renderEditorImages();
+                }
+
+                // Always re-trigger the visual updates
+                renderPreviewItems();
+                renderPreviewImages();
+                
+            } catch(err) {
+                console.error("Error cargando ODP:", err);
+                alert("Error al cargar el archivo ODP. Asegúrate de que sea válido.");
+            }
+            e.target.value = ""; // reset
+        };
+        reader.readAsText(file);
+    });
+
     // PDF/Print
     document.getElementById('printBtn').addEventListener('click', () => { window.print(); });
 });
